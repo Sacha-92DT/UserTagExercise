@@ -119,7 +119,6 @@
       <h2 id="state-h">What RUM can see</h2>
       <dl>
         <dt>Your CSS selector</dt><dd id="v-sel">–</dd>
-        <dt>Your property key</dt><dd id="v-key">–</dd>
         <dt>Element text</dt><dd id="v-text">–</dd>
         <dt>data-user</dt><dd id="v-attr">–</dd>
         <dt>RUM JavaScript</dt><dd id="v-api">–</dd>
@@ -161,8 +160,6 @@
   function refresh() {
     var v = el.getAttribute("data-user");
     $("v-sel").textContent = v ? "#" + el.id : "(set a name first)";
-    // Property keys allow only letters, digits, "_" and ".", so hyphens become underscores
-    $("v-key").textContent = v ? "username_" + el.id.replace(/^user-/, "").replace(/-/g, "_") : "(set a name first)";
     $("v-text").textContent = v ? el.textContent : "(not set)";
     $("v-attr").textContent = v || "(empty)";
     var gen3 = window.dynatrace && typeof window.dynatrace.identifyUser === "function";
