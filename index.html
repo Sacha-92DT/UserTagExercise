@@ -65,27 +65,34 @@
     <div class="brand">Account portal <small>RUM user identifier exercise</small></div>
     <div class="who">
       Signed in as
-      <!-- Captured by the Gen3 property rule: CSS selector #lab-username (optionally DOM attribute data-user) -->
-      <span id="lab-username" data-user="">not set</span>
+      <!-- The id follows the name: "user-<name>", for example #user-first-last. Captured by the
+           Gen3 property rule with that CSS selector (optionally followed by DOM attribute data-user). -->
+      <span id="lab-username" class="lab-username" data-user="">not set</span>
     </div>
   </div>
 </header>
 <script>
+  // Turn a name into a safe element id: "Sasha.Anslow" -> "user-sasha-anslow"
+  window.labUserId = function (name) {
+    var slug = String(name).toLowerCase().replace(/[^a-z0-9_-]+/g, "-").replace(/^-+|-+$/g, "");
+    return slug ? "user-" + slug : "lab-username";
+  };
   // Fill the username element straight away so it exists before RUM captures any event
   (function () {
     var name = null;
     try { name = localStorage.getItem("lab.username"); } catch (e) {}
     if (name) {
-      var el = document.getElementById("lab-username");
+      var el = document.querySelector(".lab-username");
       el.textContent = name;
       el.setAttribute("data-user", name);
+      el.id = window.labUserId(name);
     }
   })();
 </script>
 
 <main class="wrap">
   <h1>Account portal</h1>
-  <p class="lead">Enter your name, then use the actions below. Every event after that carries your name in <code>#lab-username</code>.</p>
+  <p class="lead">Enter your name, then use the actions below. The username element then gets an id based on your name, and every event after that carries it. Your CSS selector is shown under "What RUM can see".</p>
 
   <div class="grid">
     <section class="card" aria-labelledby="name-h">
@@ -111,7 +118,9 @@
     <section class="card" aria-labelledby="state-h">
       <h2 id="state-h">What RUM can see</h2>
       <dl>
-        <dt>#lab-username</dt><dd id="v-text">–</dd>
+        <dt>Your CSS selector</dt><dd id="v-sel">–</dd>
+        <dt>Your property key</dt><dd id="v-key">–</dd>
+        <dt>Element text</dt><dd id="v-text">–</dd>
         <dt>data-user</dt><dd id="v-attr">–</dd>
         <dt>RUM JavaScript</dt><dd id="v-api">–</dd>
       </dl>
@@ -127,7 +136,7 @@
 <script>
 (function () {
   var $ = function (id) { return document.getElementById(id); };
-  var el = $("lab-username");
+  var el = document.querySelector(".lab-username");
 
   function log(msg) {
     $("log").textContent = "[" + new Date().toLocaleTimeString() + "] " + msg + "\n" + $("log").textContent;
@@ -138,10 +147,12 @@
     if (name) {
       el.textContent = name;
       el.setAttribute("data-user", name);
+      el.id = window.labUserId(name);
       try { localStorage.setItem("lab.username", name); } catch (e) {}
     } else {
       el.textContent = "not set";
       el.setAttribute("data-user", "");
+      el.id = "lab-username";
       try { localStorage.removeItem("lab.username"); } catch (e) {}
     }
     refresh();
@@ -149,6 +160,9 @@
 
   function refresh() {
     var v = el.getAttribute("data-user");
+    $("v-sel").textContent = v ? "#" + el.id : "(set a name first)";
+    // Property keys allow only letters, digits, "_" and ".", so hyphens become underscores
+    $("v-key").textContent = v ? "username_" + el.id.replace(/^user-/, "").replace(/-/g, "_") : "(set a name first)";
     $("v-text").textContent = v ? el.textContent : "(not set)";
     $("v-attr").textContent = v || "(empty)";
     var gen3 = window.dynatrace && typeof window.dynatrace.identifyUser === "function";
@@ -164,7 +178,7 @@
     if (!name) return;
     setName(name);
     $("name-input").value = "";
-    log("User name set to " + name + ". Now use a few of the actions.");
+    log("User name set to " + name + ". Your CSS selector is #" + el.id + ". Now use a few of the actions.");
   });
   $("clear").addEventListener("click", function () { setName(null); log("User name cleared"); });
 
