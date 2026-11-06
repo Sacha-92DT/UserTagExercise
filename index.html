@@ -62,7 +62,7 @@
 <body>
 <header>
   <div class="wrap bar">
-    <div class="brand">Lab Shop <small>RUM user identifier exercise</small></div>
+    <div class="brand">Account portal <small>RUM user identifier exercise</small></div>
     <div class="who">
       Signed in as
       <!-- Captured by the Gen3 property rule: CSS selector #lab-username (optionally DOM attribute data-user) -->
@@ -84,15 +84,15 @@
 </script>
 
 <main class="wrap">
-  <h1>Lab Shop</h1>
-  <p class="lead">Enter your name, then click around. Every event after that carries your name in <code>#lab-username</code>.</p>
+  <h1>Account portal</h1>
+  <p class="lead">Enter your name, then use the actions below. Every event after that carries your name in <code>#lab-username</code>.</p>
 
   <div class="grid">
     <section class="card" aria-labelledby="name-h">
       <h2 id="name-h">1. Set your user name</h2>
       <form id="name-form" autocomplete="off">
         <label for="name-input" class="sr" style="position:absolute;left:-9999px">Your name</label>
-        <input id="name-input" type="text" maxlength="64" placeholder="for example sasha.anslow" required>
+        <input id="name-input" type="text" maxlength="64" placeholder="for example first.last" required>
         <button class="btn" type="submit">Set name</button>
         <button class="btn ghost" type="button" id="clear">Clear</button>
       </form>
@@ -100,13 +100,12 @@
     </section>
 
     <section class="card" aria-labelledby="shop-h">
-      <h2 id="shop-h">2. Generate interactions</h2>
+      <h2 id="shop-h">2. Use the portal</h2>
       <div class="products">
-        <div class="product"><b>Trace mug</b><span>€12</span><button class="btn" data-product="mug">Add to cart</button></div>
-        <div class="product"><b>Span socks</b><span>€8</span><button class="btn" data-product="socks">Add to cart</button></div>
-        <div class="product"><b>Grail hoodie</b><span>€45</span><button class="btn" data-product="hoodie">Add to cart</button></div>
+        <div class="product"><b>Profile</b><span>Contact details and preferences</span><button class="btn" data-action="View profile">View profile</button></div>
+        <div class="product"><b>Reports</b><span>Monthly usage summary</span><button class="btn" data-action="Download report">Download report</button></div>
+        <div class="product"><b>Settings</b><span>Notification options</span><button class="btn" data-action="Save settings">Save settings</button></div>
       </div>
-      <p style="margin:12px 0 0"><button class="btn ghost" id="checkout">Checkout (<span id="cart-count">0</span>)</button></p>
     </section>
 
     <section class="card" aria-labelledby="state-h">
@@ -165,19 +164,12 @@
     if (!name) return;
     setName(name);
     $("name-input").value = "";
-    log("User name set to " + name + ". Now click a few buttons.");
+    log("User name set to " + name + ". Now use a few of the actions.");
   });
   $("clear").addEventListener("click", function () { setName(null); log("User name cleared"); });
 
-  var cart = 0;
-  document.querySelectorAll("[data-product]").forEach(function (b) {
-    b.addEventListener("click", function () {
-      cart++; $("cart-count").textContent = cart;
-      log("Added " + b.getAttribute("data-product") + " to cart");
-    });
-  });
-  $("checkout").addEventListener("click", function () {
-    log("Checkout with " + cart + " item(s)"); cart = 0; $("cart-count").textContent = 0;
+  document.querySelectorAll("[data-action]").forEach(function (b) {
+    b.addEventListener("click", function () { log(b.getAttribute("data-action")); });
   });
 
   refresh();
