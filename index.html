@@ -28,7 +28,7 @@
   .brand { font-weight: 700; }
   .brand small { color: var(--muted); font-weight: 400; margin-left: 6px; }
   .who { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 14px; }
-  #lab-username { font-family: ui-monospace, Consolas, monospace; font-weight: 600; color: var(--text);
+  .lab-username { font-family: ui-monospace, Consolas, monospace; font-weight: 600; color: var(--text);
     background: var(--code-bg); border: 1px solid var(--border); padding: 3px 8px; border-radius: 6px; }
   main { padding: 24px 0 48px; }
   h1 { font-size: 24px; margin: 0 0 4px; }
@@ -66,7 +66,7 @@
     <div class="who">
       Signed in as
       <!-- The id follows the name: "user-<name>", for example #user-first-last. Captured by the
-           Gen3 property rule with that CSS selector (optionally followed by DOM attribute data-user). -->
+           Gen3 property rule: CSS selector #user-<name>, then Access property innerText (or DOM attribute data-user). -->
       <span id="lab-username" class="lab-username" data-user="">not set</span>
     </div>
   </div>
