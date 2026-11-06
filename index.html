@@ -179,8 +179,17 @@
   });
   $("clear").addEventListener("click", function () { setName(null); log("User name cleared"); });
 
+  // Each action makes a real request (like a portal calling its backend), so the RUM
+  // JavaScript records the click as a user action and sends a beacon.
   document.querySelectorAll("[data-action]").forEach(function (b) {
-    b.addEventListener("click", function () { log(b.getAttribute("data-action")); });
+    b.addEventListener("click", function () {
+      var action = b.getAttribute("data-action");
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "portal-data.json?action=" + encodeURIComponent(action) + "&t=" + Date.now());
+      xhr.onload = function () { log(action + " (request " + xhr.status + ")"); };
+      xhr.onerror = function () { log(action + " (request failed)"); };
+      xhr.send();
+    });
   });
 
   refresh();
